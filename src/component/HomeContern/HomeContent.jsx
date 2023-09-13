@@ -7,6 +7,7 @@ const HomeContent = (prop) => {
   const secter = prop.secter;
   const [members, setMembers] = useState([]);
   const [newUser, setNewUser] = useState({ name: "", lastname: "", position: "" }); // สร้าง state สำหรับข้อมูลผู้ใช้ใหม่
+  const [update, setUpdate] = useState(0)
 
   useEffect(() => {
     async function fetchMembers() {
@@ -15,18 +16,22 @@ const HomeContent = (prop) => {
           "https://jsd5-mock-backend.onrender.com/members"
         );
         setMembers(response.data);
+        // console.log(update)
       } catch (error) {
         console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
       }
     }
 
     fetchMembers();
-  }, []);
+  }, [update]);
 
   const handleDeleteUser = async (userId) => {
     try {
       await axios.delete(`https://jsd5-mock-backend.onrender.com/member/${userId}`);
-      setMembers((prevMembers) => prevMembers.filter((member) => member.id !== userId));
+      // setMembers((prevMembers) => prevMembers.filter((member) => member.id !== userId));
+      setUpdate(update+1)
+      // console.log(update)
+
     } catch (error) {
       console.error("เกิดข้อผิดพลาดในการลบผู้ใช้งาน:", error);
     }
@@ -35,12 +40,13 @@ const HomeContent = (prop) => {
   const handleSaveUser = async () => {
     try {
       const newUserWithId = { ...newUser, id: uuidv4() }; // เพิ่ม ID สุ่มในข้อมูลผู้ใช้งานใหม่
-      console.log(newUserWithId)
+      // console.log(newUserWithId)
       
       await axios.post("https://jsd5-mock-backend.onrender.com/members", newUserWithId);
   
       // หลังจากสร้างผู้ใช้งานสำเร็จ อัปเดต state โดยเพิ่มผู้ใช้งานใหม่
-      setMembers((prevMembers) => [...prevMembers, newUserWithId]);
+      // setMembers((prevMembers) => [...prevMembers, newUserWithId]);
+      setUpdate(update+1)
   
       // ล้างข้อมูลใน input หลังจากสร้างผู้ใช้งานเสร็จ
       setNewUser({ name: "", lastname: "", position: "" });
